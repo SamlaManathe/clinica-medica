@@ -1,6 +1,7 @@
 import express from "express"; //framework utilzado para APIs
 import dotenv from "dotenv";
 import pacienteRoutes from "./routes/pacienteRoutes.js";
+import medicoRoutes from "./routes/medicoRoutes.js";
 
 dotenv.config();
 
@@ -9,95 +10,152 @@ app.use(express.json()); //json como padrão nas req e resp http
 
 const PORT: number = Number(process.env.PORT) || 3001;
 
-app.use(pacienteRoutes);
-
-interface Usuario {
+//app.use(pacienteRoutes);
+app.use(medicoRoutes);
+/*
+interface Paciente {
     id: number;
     nome: string;
     telefone: string;
 };
 
-const usuarios: Usuario[] = [];
-usuarios.push(
+interface Medico {
+    id: number;
+    nome: string;
+    telefone: string;
+    crm: string;
+    especialidade: string;
+}
+
+const pacientes: Paciente[] = [];
+pacientes.push(
     {id: 1, nome: "Samla", telefone: "83999885448"},
-    {id: 2, nome: "Heitor", telefone: "83999854128"}
+    {id: 2, nome: "Amora", telefone: "83999854128"}
 );
 
-// GET ALL
-app.get("/usuarios", (req, res) => {
-    res.json(usuarios);
+const medicos: Medico[] = [];
+medicos.push(
+    {id: 1, nome: "Heitor", telefone: "83956841256", crm: "CF5645", especialidade: "Neurologista"},
+    {id: 2, nome: "Ana", telefone: "83914523256", crm: "CFT452", especialidade: "Cardiologista"}
+);
+
+// GET ALL (Pacientes)
+app.get("/pacientes", (req, res) => {
+    res.json(pacientes);
 });
 
-// GET ONE
-app.get("/usuarios/:id", (req, res) => {
+// GET ONE (Paciente)
+app.get("/pacientes/:id", (req, res) => {
     const idProcurado: number = Number(req.params.id); //URL é string, precisa converter
-    const usuarioEncontrado: Usuario | undefined = usuarios.find((usuario) => usuario.id === idProcurado);
-    if(usuarioEncontrado) res.json(usuarioEncontrado);
-    else res.status(404).json(`Usuário de id '${idProcurado}' não encontrado.`);
+    const pacienteEncontrado: Paciente | undefined = pacientes.find((paciente) => paciente.id === idProcurado);
+    if(pacienteEncontrado) res.json(pacienteEncontrado);
+    else res.status(404).json(`Paciente de id '${idProcurado}' não encontrado.`);
 });
 
-// POST
-app.post("/usuarios", (req, res) => {
+// POST (Paciente)
+app.post("/pacientes", (req, res) => {
     const { nome, telefone } = req.body;
+    const ultimoId = pacientes[pacientes.length - 1].id;
 
-    if(!nome || !telefone) {
-        return res.status(400).json("Nome e telefone são obrigatórios.");
-    }
-    if (typeof nome !== "string" || typeof telefone !== "string") {
-        return res.status(400).json("Dados inválidos.");
-    }
-    if (nome.trim() === "" || telefone.trim() === "") {
-        return res.status(400).json("Dados inválidos.");
-    }
-
-    const novoUsuario: Usuario = {
-        id: usuarios[usuarios.length - 1].id + 1,
+    const novoPaciente: Paciente = {
+        id: ultimoId + 1,
         nome,
         telefone
     };
 
-    usuarios.push(novoUsuario);
-    res.status(201).json(novoUsuario);
+    pacientes.push(novoPaciente);
+    res.status(201).json(novoPaciente);
 });
 
-// PUT
-app.put("/usuarios/:id", (req, res) => {
+// PUT (Paciente)
+app.put("/pacientes/:id", (req, res) => {
     const idProcurado: number = Number(req.params.id);
-    const usuarioEncontrado: Usuario | undefined = usuarios.find((usuario) => usuario.id === idProcurado);
-    if(!usuarioEncontrado) return res.status(404).json(`Usuário de id '${idProcurado}' não encontrado.`);
+    const pacienteEncontrado: Paciente | undefined = pacientes.find((paciente) => paciente.id === idProcurado);
+    if(!pacienteEncontrado) return res.status(404).json(`Paciente de id '${idProcurado}' não encontrado.`);
 
     const { nome, telefone } = req.body;
 
-    if(!nome || !telefone) {
-        return res.status(400).json("Nome e telefone são obrigatórios.");
-    }
-    if (typeof nome !== "string" || typeof telefone !== "string") {
-        return res.status(400).json("Dados inválidos.");
-    }
-    if (nome.trim() === "" || telefone.trim() === "") {
-        return res.status(400).json("Dados inválidos.");
-    }
-
-    usuarioEncontrado.nome = nome;
-    usuarioEncontrado.telefone = telefone;
-    res.status(200).json(usuarioEncontrado);
+    pacienteEncontrado.nome = nome;
+    pacienteEncontrado.telefone = telefone;
+    res.status(200).json(pacienteEncontrado);
 });
 
-// DELETE
-app.delete("/usuarios/:id", (req, res) => {
+// DELETE (Paciente)
+app.delete("/pacientes/:id", (req, res) => {
     const idProcurado: number = Number(req.params.id);
 
-    const indice = usuarios.findIndex(
-        usuario => usuario.id === idProcurado
+    const indice = pacientes.findIndex(
+        paciente => paciente.id === idProcurado
     );
 
-    if (indice === -1) return res.status(404).json(`Usuário de id '${idProcurado}' não encontrado.`);
+    if (indice === -1) return res.status(404).json(`Paciente de id '${idProcurado}' não encontrado.`);
 
-    usuarios.splice(indice, 1);
+    pacientes.splice(indice, 1);
 
-    res.status(200).json("Usuário removido com sucesso.");
+    res.status(200).json("Paciente removido com sucesso.");
 });
 
+// GET ALL (Médicos)
+app.get("/medicos", (req, res) => {
+    res.json(medicos);
+});
+
+// GET ONE (Médico)
+app.get("/medicos/:id", (req, res) => {
+    const idProcurado: number = Number(req.params.id); //URL é string, precisa converter
+    const medicoEncontrado: Medico | undefined = medicos.find((medico) => medico.id === idProcurado);
+    if(medicoEncontrado) res.json(medicoEncontrado);
+    else res.status(404).json(`Médico de id '${idProcurado}' não encontrado.`);
+});
+
+// POST (Médico)
+app.post("/medicos", (req, res) => {
+    const { nome, telefone, crm, especialidade } = req.body;
+    const ultimoId = medicos[medicos.length - 1].id;
+
+    const novoMedico: Medico = {
+        id: ultimoId + 1,
+        nome,
+        telefone,
+        crm,
+        especialidade
+    };
+
+    medicos.push(novoMedico);
+    res.status(201).json(novoMedico);
+});
+
+// PUT (Médico)
+app.put("/medicos/:id", (req, res) => {
+    const idProcurado: number = Number(req.params.id);
+    const medicoEncontrado: Medico | undefined = medicos.find((medico) => medico.id === idProcurado);
+    if(!medicoEncontrado) return res.status(404).json(`Médico de id '${idProcurado}' não encontrado.`);
+
+    const { nome, telefone, crm, especialidade } = req.body;
+
+    medicoEncontrado.nome = nome;
+    medicoEncontrado.telefone = telefone;
+    medicoEncontrado.crm = crm;
+    medicoEncontrado.especialidade = especialidade;
+
+    res.status(200).json(medicoEncontrado);
+});
+
+// DELETE (Médico)
+app.delete("/medicos/:id", (req, res) => {
+    const idProcurado: number = Number(req.params.id);
+
+    const indice = medicos.findIndex(
+        medico => medico.id === idProcurado
+    );
+
+    if (indice === -1) return res.status(404).json(`Médico de id '${idProcurado}' não encontrado.`);
+
+    medicos.splice(indice, 1);
+
+    res.status(204).json("Médico removido com sucesso.");
+});
+*/
 // npm run dev (para subir a API)
 app.listen(PORT, () => {
     console.log(`A API subiu na porta ${PORT}`);
