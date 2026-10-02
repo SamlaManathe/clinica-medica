@@ -1,5 +1,5 @@
-import type { Medico } from "../interfaces/medicoInterface.js";
-import type { MedicoDTO } from "../interfaces/medicoDTOInterface.js";
+import type { Medico } from "../types/medicoInterface.js";
+import type { MedicoDTO } from "../types/medicoDTOInterface.js";
 
 const medicos: Medico[] = [];
     medicos.push(

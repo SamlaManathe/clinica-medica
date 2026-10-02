@@ -1,6 +1,6 @@
 import * as repo from "../repositories/medicoRepository.js";
-import type { Medico } from "../interfaces/medicoInterface.js";
-import type { MedicoDTO } from "../interfaces/medicoDTOInterface.js";
+import type { Medico } from "../types/medicoInterface.js";
+import type { MedicoDTO } from "../types/medicoDTOInterface.js";
 
 export async function obterMedicos(): Promise<Medico[]> {
     return await repo.obterMedicos();

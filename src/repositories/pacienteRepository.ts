@@ -1,19 +1,10 @@
-export function obterPacientes(){
+import { prisma } from "../lib/prisma.js";
+import type { PacienteDTO } from "../types/paciente.js"
 
-};
+export async function buscaPacientePorId(id: number) {
+    return await prisma.paciente.findUnique({ where: { id } });
+}
 
-export function obterPacientePorId(id: number){
-  
-};
-
-export function criarPaciente(){
-
-};
-
-export function alterarPaciente(id: number){
-
-};
-
-export function deletarPaciente(id: number){
-
-};
+export async function cadastrarPaciente(dadosPaciente: PacienteDTO) {
+    return await prisma.paciente.create({ data: dadosPaciente });
+}

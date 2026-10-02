@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import * as service from "../services/medicoService.js";
-import type { Medico } from "../interfaces/medicoInterface.js";
-import type { MedicoDTO } from "../interfaces/medicoDTOInterface.js";
+import type { Medico } from "../types/medicoInterface.js";
+import type { MedicoDTO } from "../types/medicoDTOInterface.js";
 
 export async function obterMedicos(req: Request, res: Response) {
     const medicos: Medico[] = await service.obterMedicos();
