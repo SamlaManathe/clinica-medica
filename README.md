@@ -26,16 +26,21 @@ API RESTful para gestão de clínica médica desenvolvida em **Node.js** e **Typ
 
 ```text
 clinicaMedica/
-├── prisma/               # Schema e migrações do Prisma
-├── src/
-│   ├── controllers/      # Recebimento de requisições e respostas HTTP
-│   ├── repositories/     # Interface direta de persistência com o banco
-│   ├── routes/           # Mapeamento e declaração das rotas Express
-│   ├── services/         # Regras de negócio e validações
-│   └── server.ts         # Ponto de entrada e inicialização do servidor
+├── package.json          # Raiz: npm workspaces (shared, api, frontend)
 ├── docker-compose.yml    # Orquestração do banco PostgreSQL
-├── package.json
-└── tsconfig.json
+├── shared/               # Schemas Zod e tipos usados pela API e pelo frontend
+│   └── src/
+├── api/                  # Backend (Express + Prisma)
+│   ├── prisma/           # Schema do Prisma
+│   └── src/
+│       ├── config/       # Prisma Client e Swagger
+│       ├── controllers/  # Recebimento de requisições e respostas HTTP
+│       ├── middlewares/  # Validação do body com Zod
+│       ├── repositories/ # Interface direta de persistência com o banco
+│       ├── routes/       # Mapeamento e declaração das rotas Express
+│       ├── services/     # Regras de negócio
+│       └── server.ts     # Ponto de entrada e inicialização do servidor
+└── frontend/             # React + Vite + Mantine (criado na aula de frontend)
 ```
 
 ---
@@ -45,7 +50,9 @@ clinicaMedica/
 - **Runtime & Linguagem:** [Node.js](https://nodejs.org/) (v20+) & [TypeScript](https://www.typescriptlang.org/)
 - **Framework Web:** [Express](https://expressjs.com/)
 - **ORM:** [Prisma](https://www.prisma.io/)
-- **Validação:** [Zod](https://zod.dev/)
+- **Validação:** [Zod](https://zod.dev/) (schemas compartilhados entre API e frontend em `shared/`)
+- **Frontend:** [React](https://react.dev/) + [Vite](https://vite.dev/) + [Mantine](https://mantine.dev/)
+- **Senhas:** [bcryptjs](https://github.com/dcodeIO/bcrypt.js) (hash)
 - **Banco de Dados:** [PostgreSQL 16](https://www.postgresql.org/)
 - **Execução & Dev:** [tsx](https://github.com/privatenumber/tsx) (Fast TypeScript execution)
 - **Containerização:** [Docker & Docker Compose](https://www.docker.com/)
@@ -65,7 +72,7 @@ git clone https://github.com/douglasmeneses/clinicaMedica.git
 cd clinicaMedica
 ```
 
-### 2. Instalar as dependências
+### 2. Instalar as dependências (na raiz, instala os três workspaces)
 ```bash
 npm install
 ```
@@ -76,23 +83,26 @@ docker compose up -d
 ```
 
 ### 4. Configurar variáveis de ambiente
-Crie um arquivo `.env` na raiz do projeto com a URL de conexão:
+Crie o arquivo `api/.env` com a URL de conexão:
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/clinica?schema=public"
 PORT=3000
 ```
 
-### 5. Executar as migrações do Prisma
+### 5. Gerar o Prisma Client e sincronizar o banco
 ```bash
-npx prisma migrate dev
+cd api
+npx prisma generate
+npx prisma db push
+cd ..
 ```
 
-### 6. Iniciar a aplicação em modo de desenvolvimento
+### 6. Iniciar a API em modo de desenvolvimento
 ```bash
-npm run dev
+npm run dev -w api
 ```
 
-A API estará acessível em `http://localhost:3000`.
+A API estará acessível em `http://localhost:3000` e a documentação em `http://localhost:3000/docs`.
 
 ---
 
@@ -117,6 +127,14 @@ A API estará acessível em `http://localhost:3000`.
 | `POST` | `/medicos` | Cadastra um novo médico |
 | `PUT` | `/medicos/:id` | Atualiza os dados de um médico existente |
 | `DELETE` | `/medicos/:id` | Remove um médico da base de dados |
+
+### Autenticação
+
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `POST` | `/auth/login` | Recebe `cpf` e `senha` e devolve o secretário (sem a senha). `401` se não conferem |
+
+Secretários são cadastrados com senha (`POST /secretarios`), guardada como hash bcrypt. Secretários cadastrados antes da senha existir ficam sem senha e não conseguem fazer login.
 
 ---
 
