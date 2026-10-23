@@ -4,6 +4,8 @@ import {
   extendZodWithOpenApi,
 } from "@asteasolutions/zod-to-openapi";
 import { z, type ZodType, type ZodObject } from "zod";
+import { pacienteSchema } from "../schemas/pacienteSchema.js";
+import { medicoSchema } from "../schemas/medicoSchema.js";
 import { secretarioSchema } from "../schemas/secretarioSchema.js";
 import { consultaSchema, consultaFiltroSchema } from "../schemas/consultaSchema.js";
 
@@ -115,6 +117,20 @@ function registrarCrud({
 // -------------------------------------------------------------
 // 2. Registro declarativo de cada recurso (1 chamada por CRUD!)
 // -------------------------------------------------------------
+registrarCrud({
+  tag: "Pacientes",
+  path: "/pacientes",
+  nomeModelo: "Paciente",
+  schema: pacienteSchema,
+});
+
+registrarCrud({
+  tag: "Médicos",
+  path: "/medicos",
+  nomeModelo: "Medico",
+  schema: medicoSchema,
+});
+
 registrarCrud({
   tag: "Secretários",
   path: "/secretarios",
