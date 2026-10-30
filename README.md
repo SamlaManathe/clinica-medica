@@ -83,10 +83,9 @@ docker compose up -d
 ```
 
 ### 4. Configurar variáveis de ambiente
-Crie o arquivo `api/.env` com a URL de conexão:
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/clinica?schema=public"
-PORT=3000
+Crie o arquivo `api/.env` a partir do exemplo:
+```bash
+cp api/.env.example api/.env
 ```
 
 ### 5. Gerar o Prisma Client e sincronizar o banco
